@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/default_gray_clickable_selector"
+    android:paddingStart="16dp"
+    android:paddingTop="12dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="12dp">
+
+    <ImageView
+        android:id="@+id/item_user_image_view"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:contentDescription="@string/image_description_user_image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/user_image_placeholder" />
+
+    <LinearLayout
+        android:id="@+id/item_user_details_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@id/item_user_image_view"
+        app:layout_constraintStart_toEndOf="@id/item_user_image_view"
+        app:layout_constraintTop_toTopOf="@id/item_user_image_view">
+
+        <TextView
+            android:id="@+id/item_user_name_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="Olde English Comedy" />
+
+        <TextView
+            android:id="@+id/item_user_followers_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textSize="12sp"
+            tools:text="397 videos ⋅ 168K followers" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

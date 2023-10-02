@@ -1,0 +1,11 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+
+    <!-- Other dimensions -->
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="button_margin">30dp</dimen>
+
+    <!-- MarginDividerItemDecoration -->
+    <dimen name="recycler_view_divider_margin">16dp</dimen>
+
+</resources>
