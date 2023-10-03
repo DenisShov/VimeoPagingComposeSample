@@ -7,9 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.GridLayoutManager
@@ -107,9 +105,9 @@ class CommentsFragment : BaseFragment<FragmentCommentsBinding>() {
             pagerAdapter.retry()
         }
 
-        vm.commentResult.observe(viewLifecycleOwner, Observer<PagingData<RelationsComment>> {
+        vm.commentResult.observe(viewLifecycleOwner) {
             pagerAdapter.submitData(lifecycle, it)
-        })
+        }
     }
 
     private fun setUpLayoutManager(context: Context?, isTabletLayout: Boolean): LayoutManager? {

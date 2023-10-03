@@ -3,7 +3,7 @@ package com.dshovhenia.compose.playgroundapp.ui.details.comments
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.dshovhenia.compose.playgroundapp.R
-import com.dshovhenia.compose.playgroundapp.data.cache.model.comment.CachedComment
+import com.dshovhenia.compose.playgroundapp.data.cache.mapper.relationsMapper.toCachedComment
 import com.dshovhenia.compose.playgroundapp.data.cache.model.comment.RelationsComment
 import com.dshovhenia.compose.playgroundapp.databinding.ItemCommentBinding
 import com.dshovhenia.compose.playgroundapp.paging.base.ListItemViewHolder
@@ -16,7 +16,7 @@ class CommentViewHolder(
 ) : ListItemViewHolder<RelationsComment>(baseFragment, itemCommentBinding.root) {
 
     override fun bind(listItem: RelationsComment, onItemClick: ((RelationsComment) -> Unit)?) {
-        val comment = CachedComment().initialize(listItem)
+        val comment = listItem.toCachedComment()
 
         itemCommentBinding.apply {
             commentTextView.text = comment.text

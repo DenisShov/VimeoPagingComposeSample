@@ -4,7 +4,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.dshovhenia.compose.playgroundapp.data.cache.helper.CommentDbHelper
-import com.dshovhenia.compose.playgroundapp.data.cache.mapper.comment.CommentMapper
+import com.dshovhenia.compose.playgroundapp.data.cache.mapper.comment.toCachedComment
 import com.dshovhenia.compose.playgroundapp.data.cache.model.comment.RelationsComment
 import com.dshovhenia.compose.playgroundapp.data.model.Collection
 import com.dshovhenia.compose.playgroundapp.data.model.comment.Comment
@@ -17,7 +17,6 @@ import java.io.IOException
 class CommentRemoteMediator(
     private val initialUri: String,
     private val commentDbHelper: CommentDbHelper,
-    private val commentMapper: CommentMapper,
     private val service: VimeoApiService
 ) : RemoteMediator<Int, RelationsComment>() {
 
@@ -60,7 +59,7 @@ class CommentRemoteMediator(
                     // Store the loaded data and the next key in transaction, so that
                     // they're always consistent.
                     val videos = addLinkToNextPage(collection)
-                    commentDbHelper.insertComments(videos.map { commentMapper.mapTo(it) })
+                    commentDbHelper.insertComments(videos.map { it.toCachedComment() })
                 } else {
                     Timber.i("No data. Response: %s", response)
                 }
@@ -76,11 +75,10 @@ class CommentRemoteMediator(
         }
     }
 
-    private fun addLinkToNextPage(collection: Collection<Comment>) =
-        collection.data.map {
-            it.nextPage = collection.paging?.next ?: ""
-            it
-        }
+    private fun addLinkToNextPage(collection: Collection<Comment>) = collection.data.map {
+        it.nextPage = collection.paging?.next ?: ""
+        it
+    }
 
     companion object {
         private const val INITIAL_PAGE_NUMBER = 1
