@@ -62,7 +62,7 @@ dependencies {
     val android_fragment = "1.6.1"
     val nav_version = "2.7.3"
     val lifecycle_version = "2.6.2"
-    val paging_version = "3.0.0-alpha03"
+    val paging_version = "3.2.1"
     val room_version = "2.3.0-alpha02"
 
     // Kotlin
@@ -91,7 +91,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
 
     // Paging
-    implementation("androidx.paging:paging-runtime:$paging_version")
+    implementation("androidx.paging:paging-runtime-ktx:$paging_version")
+    implementation("androidx.paging:paging-compose:$paging_version")
 
     // Room components
     implementation("androidx.room:room-runtime:$room_version")

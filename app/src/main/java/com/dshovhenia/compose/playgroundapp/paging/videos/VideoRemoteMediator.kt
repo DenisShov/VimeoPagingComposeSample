@@ -5,7 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.dshovhenia.compose.playgroundapp.data.cache.helper.VideoDbHelper
-import com.dshovhenia.compose.playgroundapp.data.cache.mapper.video.VideoMapper
+import com.dshovhenia.compose.playgroundapp.data.cache.mapper.video.toCachedVideo
 import com.dshovhenia.compose.playgroundapp.data.cache.model.video.RelationsVideo
 import com.dshovhenia.compose.playgroundapp.data.model.Collection
 import com.dshovhenia.compose.playgroundapp.data.model.video.Video
@@ -19,7 +19,6 @@ class VideoRemoteMediator(
     private val initialUri: String,
     private val searchQuery: String?,
     private val videoDbHelper: VideoDbHelper,
-    private val videoMapper: VideoMapper,
     private val service: VimeoApiService
 ) : RemoteMediator<Int, RelationsVideo>() {
 
@@ -67,7 +66,7 @@ class VideoRemoteMediator(
                     // Store loaded data, and next key in transaction, so that
                     // they're always consistent.
                     val videos = addLinkToNextPage(collection)
-                    videoDbHelper.insertVideos(videos.map { videoMapper.mapTo(it) })
+                    videoDbHelper.insertVideos(videos.map { it.toCachedVideo() })
                 } else {
                     Timber.i("No data. Response: %s", response)
                 }

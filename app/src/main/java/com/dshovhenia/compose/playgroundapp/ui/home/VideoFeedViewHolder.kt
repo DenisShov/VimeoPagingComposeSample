@@ -4,7 +4,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.dshovhenia.compose.playgroundapp.R
-import com.dshovhenia.compose.playgroundapp.data.cache.mapper.relationsMapper.RelationsVideoMapper
+import com.dshovhenia.compose.playgroundapp.data.cache.mapper.relationsMapper.toCachedVideo
 import com.dshovhenia.compose.playgroundapp.data.cache.model.video.RelationsVideo
 import com.dshovhenia.compose.playgroundapp.databinding.ItemVideoFeedBinding
 import com.dshovhenia.compose.playgroundapp.paging.base.ListItemViewHolder
@@ -14,7 +14,6 @@ import com.dshovhenia.compose.playgroundapp.util.VimeoTextUtil
 class VideoFeedViewHolder(
     baseFragment: Fragment,
     private val itemVideoFeedBinding: ItemVideoFeedBinding,
-    private val relationsVideoMapper: RelationsVideoMapper,
     screenDimensions: Dimensions
 ) : ListItemViewHolder<RelationsVideo>(baseFragment, itemVideoFeedBinding.root) {
 
@@ -24,7 +23,7 @@ class VideoFeedViewHolder(
     }
 
     override fun bind(listItem: RelationsVideo, onItemClick: ((RelationsVideo) -> Unit)?) {
-        val video = relationsVideoMapper.mapFrom(listItem)
+        val video = listItem.toCachedVideo()
 
         itemView.setOnClickListener { onItemClick?.invoke(listItem) }
 
@@ -40,12 +39,12 @@ class VideoFeedViewHolder(
                 VimeoTextUtil.formatSecondsToDuration(video.duration)
 
             if (video.pictureSizes.size > 2) {
-        Glide.with(mBaseFragment)
-          .load(video.pictureSizes[2].link)
-          .placeholder(R.drawable.video_image_placeholder)
-          .fallback(R.drawable.video_image_placeholder)
-          .fitCenter()
-          .into(videoImageView)
+                Glide.with(mBaseFragment)
+                    .load(video.pictureSizes[2].link)
+                    .placeholder(R.drawable.video_image_placeholder)
+                    .fallback(R.drawable.video_image_placeholder)
+                    .fitCenter()
+                    .into(videoImageView)
             }
         }
     }
