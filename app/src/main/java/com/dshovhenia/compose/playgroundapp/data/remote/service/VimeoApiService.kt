@@ -1,9 +1,9 @@
 package com.dshovhenia.compose.playgroundapp.data.remote.service
 
-import com.dshovhenia.compose.playgroundapp.data.cache.preferences.model.AccessToken
-import com.dshovhenia.compose.playgroundapp.data.model.Collection
-import com.dshovhenia.compose.playgroundapp.data.model.comment.Comment
-import com.dshovhenia.compose.playgroundapp.data.model.video.Video
+import com.dshovhenia.compose.playgroundapp.data.local.preferences.model.AccessToken
+import com.dshovhenia.compose.playgroundapp.data.remote.model.Collection
+import com.dshovhenia.compose.playgroundapp.data.remote.model.comment.Comment
+import com.dshovhenia.compose.playgroundapp.data.remote.model.video.Video
 import retrofit2.Response
 import retrofit2.http.*
 

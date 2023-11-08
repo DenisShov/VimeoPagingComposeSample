@@ -1,6 +1,6 @@
 package com.dshovhenia.compose.playgroundapp.data.remote.authentication
 
-import com.dshovhenia.compose.playgroundapp.data.cache.preferences.PreferencesHelper
+import com.dshovhenia.compose.playgroundapp.data.local.preferences.PreferencesHelper
 import okhttp3.Interceptor
 import okhttp3.Interceptor.Chain
 import okhttp3.Response
@@ -30,7 +30,7 @@ class AuthenticationInterceptor @Inject constructor(private val mPreferencesHelp
 
     // set or override the 'Authorization' header - keep the request body
     val newRequest = original.newBuilder().header(KEY_AUTHORIZATION, accessToken.authorizationHeader)
-        .method(original.method(), original.body()).build()
+        .method(original.method, original.body).build()
     return chain.proceed(newRequest)
   }
 

@@ -2,8 +2,8 @@ package com.dshovhenia.compose.playgroundapp.data.remote.authentication
 
 import android.util.Base64
 import com.dshovhenia.compose.playgroundapp.BuildConfig
-import com.dshovhenia.compose.playgroundapp.data.cache.preferences.PreferencesHelper
-import com.dshovhenia.compose.playgroundapp.data.cache.preferences.model.AccessToken
+import com.dshovhenia.compose.playgroundapp.data.local.preferences.PreferencesHelper
+import com.dshovhenia.compose.playgroundapp.data.local.preferences.model.AccessToken
 import com.dshovhenia.compose.playgroundapp.data.remote.service.VimeoApiService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,7 +50,7 @@ class VimeoServiceAuthenticator @Inject constructor(
         var newRequest: Request? = null
 
         newAccessToken?.let {
-            newRequest = response.request().newBuilder()
+            newRequest = response.request.newBuilder()
                 .header("Authorization", it.authorizationHeader).build()
             // save the newAccessToken in SharedPref
             prefHelper.accessToken = it
@@ -62,7 +62,7 @@ class VimeoServiceAuthenticator @Inject constructor(
     private fun responseCount(response: Response?): Int {
         var res = response
         var result = 1
-        while ((res?.priorResponse().also { res = it }) != null) {
+        while ((res?.priorResponse.also { res = it }) != null) {
             result++
         }
         return result

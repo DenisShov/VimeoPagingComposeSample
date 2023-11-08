@@ -46,8 +46,12 @@ android {
     }
 
     buildFeatures {
+        compose = true
         viewBinding = true
         buildConfig = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.3"
     }
 }
 
@@ -56,26 +60,41 @@ kapt {
 }
 
 dependencies {
-    val kotlin_version = "1.8.10"
     val retrofit_version = "2.6.0"
-    val android_activity = "1.7.2"
-    val android_fragment = "1.6.1"
     val nav_version = "2.7.3"
     val lifecycle_version = "2.6.2"
     val paging_version = "3.2.1"
     val room_version = "2.3.0-alpha02"
+    val compose_ui_version = "1.4.3"
 
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
 
     implementation("androidx.annotation:annotation:1.7.0")
-    implementation("androidx.activity:activity-ktx:$android_activity")
-    implementation("androidx.fragment:fragment-ktx:$android_fragment")
+    implementation("androidx.activity:activity-ktx:1.7.2")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
     implementation("com.google.android.material:material:1.9.0")
 
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.recyclerview:recyclerview:1.3.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // Compose
+    implementation("androidx.activity:activity-compose:1.7.2")
+    implementation("androidx.compose.ui:ui:$compose_ui_version")
+    implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
+    implementation("androidx.compose.material:material:$compose_ui_version")
+    debugImplementation("androidx.compose.ui:ui-tooling:$compose_ui_version")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_ui_version")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-webview:0.32.0")
+
+    // Coil Compose
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
@@ -121,6 +140,7 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.45")
     kapt("com.google.dagger:hilt-android-compiler:2.45")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
