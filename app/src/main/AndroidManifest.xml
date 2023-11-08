@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.dshovhenia.compose.playgroundapp.ui.MainActivity"
+            android:name="com.dshovhenia.compose.playgroundapp.feature.MainActivity"
             android:exported="true"
             android:theme="@style/AppTheme.BrandedLaunch">
             <intent-filter>

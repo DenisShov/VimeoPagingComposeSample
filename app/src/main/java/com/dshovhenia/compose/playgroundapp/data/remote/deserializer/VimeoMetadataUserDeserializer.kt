@@ -1,7 +1,7 @@
 package com.dshovhenia.compose.playgroundapp.data.remote.deserializer
 
-import com.dshovhenia.compose.playgroundapp.data.model.Connection
-import com.dshovhenia.compose.playgroundapp.data.model.user.UserMetadata
+import com.dshovhenia.compose.playgroundapp.data.remote.model.Connection
+import com.dshovhenia.compose.playgroundapp.data.remote.model.user.UserMetadata
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement

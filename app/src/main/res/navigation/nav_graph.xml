@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.dshovhenia.compose.playgroundapp.ui.home.HomeFragment"
+        android:name="com.dshovhenia.compose.playgroundapp.feature.home.HomeFragment"
         android:label="HomeFragment">
         <action
             android:id="@+id/action_homeFragment_to_videoFragment"
@@ -19,6 +19,6 @@
 
     <fragment
         android:id="@+id/videoFragment"
-        android:name="com.dshovhenia.compose.playgroundapp.ui.details.VideoFragment"
+        android:name="com.dshovhenia.compose.playgroundapp.feature.details.VideoFragment"
         android:label="VideoFragment" />
 </navigation>
