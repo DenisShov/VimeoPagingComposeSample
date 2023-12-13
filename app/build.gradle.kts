@@ -47,11 +47,13 @@ android {
 
     buildFeatures {
         compose = true
-        viewBinding = true
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.0"
+    }
+    kapt {
+        correctErrorTypes = true
     }
 }
 
@@ -64,35 +66,30 @@ dependencies {
     val nav_version = "2.7.3"
     val lifecycle_version = "2.6.2"
     val paging_version = "3.2.1"
-    val room_version = "2.3.0-alpha02"
-    val compose_ui_version = "1.4.3"
+    val room_version = "2.6.0"
 
     // Kotlin
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10")
-
-    implementation("androidx.annotation:annotation:1.7.0")
-    implementation("androidx.activity:activity-ktx:1.7.2")
-    implementation("androidx.fragment:fragment-ktx:1.6.1")
-    implementation("com.google.android.material:material:1.9.0")
-
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.recyclerview:recyclerview:1.3.1")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0")
 
     // Compose
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation("androidx.compose.ui:ui:$compose_ui_version")
-    implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
-    implementation("androidx.compose.material:material:$compose_ui_version")
-    debugImplementation("androidx.compose.ui:ui-tooling:$compose_ui_version")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:$compose_ui_version")
+    val composeBom = platform("androidx.compose:compose-bom:2023.10.00")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
 
+    // Material Design 2
+    implementation("androidx.compose.material:material")
+    // Android Studio Preview support
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    // Lifecycle utilities for Compose
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+    // Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
-
+    // UI Tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
     // Accompanist
     implementation("com.google.accompanist:accompanist-webview:0.32.0")
-
     // Coil Compose
     implementation("io.coil-kt:coil-compose:2.2.2")
 
@@ -103,6 +100,8 @@ dependencies {
     // Navigation
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
+    implementation("androidx.navigation:navigation-compose:2.7.5")
 
     //ViewModel & LiveData
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
@@ -116,6 +115,7 @@ dependencies {
     // Room components
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-paging:$room_version")
     kapt("androidx.room:room-compiler:$room_version")
 
     // Retrofit
@@ -123,24 +123,15 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:$retrofit_version")
     implementation("com.squareup.okhttp3:logging-interceptor:3.10.0")
 
-    // Stetho
-    implementation("com.facebook.stetho:stetho-okhttp3:1.5.1")
-
-    // Glide
-    implementation("com.github.bumptech.glide:glide:4.12.0")
-    kapt("com.github.bumptech.glide:compiler:4.12.0")
-    implementation("com.github.bumptech.glide:recyclerview-integration:4.12.0") {
-        // Excludes the support library because it's already included by Glide.
-        isTransitive = false
-    }
-
     // Timber
     implementation("com.jakewharton.timber:timber:4.7.1")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.45")
-    kapt("com.google.dagger:hilt-android-compiler:2.45")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+
+    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

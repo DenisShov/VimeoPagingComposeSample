@@ -19,7 +19,6 @@ fun getRelationsUser(): RelationsUser {
 }
 
 fun getCachedUser() = CachedUser(
-    id = null,
     commentId = null,
     videoId = null,
     name = "Aisha",
@@ -43,7 +42,7 @@ private fun getCachedComment(): CachedComment {
     )
 }
 
-private fun getCachedVideo(): CachedVideo {
+fun getCachedVideo(): CachedVideo {
     return CachedVideo(
         uri = "/videos/820880527",
         name = "Some video name",

@@ -82,7 +82,7 @@ class VideoRemoteMediator(
 
     private fun addLinkToNextPage(collection: Collection<Video>) =
         collection.data.map {
-            it.nextPage = collection.paging?.next ?: ""
+            it.nextPage = collection.paging?.next
             it
         }
 

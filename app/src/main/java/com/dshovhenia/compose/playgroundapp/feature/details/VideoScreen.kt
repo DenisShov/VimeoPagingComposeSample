@@ -19,15 +19,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,16 +48,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.dshovhenia.compose.playgroundapp.R
 import com.dshovhenia.compose.playgroundapp.core.utils.DisplayMetricsUtil
 import com.dshovhenia.compose.playgroundapp.core.utils.TextUtil
@@ -61,135 +67,165 @@ import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.CachedVide
 import com.dshovhenia.compose.playgroundapp.feature.base.HandleFailure
 import com.dshovhenia.compose.playgroundapp.feature.details.components.CommentItem
 import com.dshovhenia.compose.playgroundapp.feature.details.components.ExpandableText
-import com.dshovhenia.compose.playgroundapp.feature.theme.ComposePlaygroundAppTheme
+import com.dshovhenia.compose.playgroundapp.feature.home.ErrorListItem
+import com.dshovhenia.compose.playgroundapp.feature.home.showSnackBar
 import com.google.accompanist.web.AccompanistWebViewClient
 import com.google.accompanist.web.WebView
 import com.google.accompanist.web.rememberWebViewState
-
-@Preview(showBackground = true)
-@Composable
-fun VideoScreenPreview() {
-    ComposePlaygroundAppTheme {
-        VideoScreen(viewModel = viewModel())
-    }
-}
+import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun VideoScreen(viewModel: VideoViewModel) {
+fun VideoScreen(viewModel: VideoViewModel = hiltViewModel()) {
     HandleFailure(viewModel.failure)
 
     val video by viewModel.video.collectAsState()
     val comments = viewModel.comments.collectAsLazyPagingItems()
 
-    video?.let { VideoDetailContent(it, comments) }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val scaffoldState = rememberScaffoldState()
+    val lazyColumnState = rememberLazyListState()
+
+    video?.let { VideoDetailContent(context, it, comments, scope, scaffoldState, lazyColumnState) }
 }
 
 @Composable
-fun VideoDetailContent(video: CachedVideo, comments: LazyPagingItems<RelationsComment>) {
-    Column(
-        modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                Box(modifier = Modifier.fillMaxWidth()) {
-                    VideoWebView(video)
-                    Text(
-                        text = TextUtil.formatSecondsToDuration(video.duration),
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .background(colorResource(R.color.dimFilter), RectangleShape)
-                            .align(Alignment.BottomEnd),
-                        fontSize = 12.sp,
-                    )
-                }
-                Text(
-                    text = video.name,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                    color = colorResource(R.color.colorPrimaryText),
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Start,
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = TextUtil.formatVideoAgeAndPlays(video.videoPlays, video.createdTime),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                    fontSize = 12.sp,
-                    textAlign = TextAlign.Start,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Divider(color = Color.Gray, thickness = 1.dp)
-                ExpandableText(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
-                    style = TextStyle(
-                        color = colorResource(R.color.colorPrimaryText),
-                        fontSize = 14.sp,
-                        textAlign = TextAlign.Start
-                    ),
-                    text = video.description,
-                    showMoreStyle = SpanStyle(
-                        fontWeight = FontWeight.W500,
-                        color = colorResource(R.color.colorPrimary)
-                    )
-                )
-                video.user?.let {
-                    UserItem(it)
-                }
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .background(colorResource(R.color.colorPrimary), RectangleShape)
+fun VideoDetailContent(
+    context: Context,
+    video: CachedVideo,
+    comments: LazyPagingItems<RelationsComment>,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    lazyColumnState: LazyListState
+) {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        modifier = Modifier.fillMaxSize(),
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                LazyColumn(
+                    state = lazyColumnState,
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(
-                        text = stringResource(R.string.comments),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight()
-                            .padding(8.dp),
-                        color = colorResource(R.color.colorPrimaryText),
-                        fontSize = 24.sp,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-
-            if (comments.loadState.refresh is LoadState.Loading) {
-                item {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .padding(16.dp)
-                    )
-                }
-            } else {
-                items(count = comments.itemCount) { index ->
-                    comments[index]?.let {
-                        CommentItem(comment = it)
-                    }
-                }
-                item {
-                    if (comments.loadState.append is LoadState.Loading) {
-                        CircularProgressIndicator(
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            VideoWebView(video)
+                            Text(
+                                text = TextUtil.formatSecondsToDuration(video.duration),
+                                modifier = Modifier
+                                    .wrapContentWidth()
+                                    .background(colorResource(R.color.dimFilter), RectangleShape)
+                                    .align(Alignment.BottomEnd),
+                                fontSize = 12.sp,
+                            )
+                        }
+                        Text(
+                            text = video.name,
                             modifier = Modifier
-                                .wrapContentWidth()
-                                .padding(16.dp)
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, top = 8.dp, end = 16.dp),
+                            color = colorResource(R.color.colorPrimaryText),
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+                        Text(
+                            text = TextUtil.dateCreatedToTimePassed(video.createdTime),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Start,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                        Divider(color = Color.Gray, thickness = 1.dp)
+                        ExpandableText(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+                            style = TextStyle(
+                                color = colorResource(R.color.colorPrimaryText),
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Start
+                            ),
+                            text = video.description,
+                            showMoreStyle = SpanStyle(
+                                fontWeight = FontWeight.W500,
+                                color = colorResource(R.color.colorPrimary)
+                            )
+                        )
+                        video.user?.let {
+                            UserItem(it)
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .background(colorResource(R.color.colorPrimary), RectangleShape)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.comments),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                                    .padding(8.dp),
+                                color = colorResource(R.color.colorPrimaryText),
+                                fontSize = 24.sp,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                    items(count = comments.itemCount) { index ->
+                        comments[index]?.let {
+                            CommentItem(comment = it)
+                        }
+                    }
+
+                    when {
+                        comments.loadState.append is LoadState.Loading -> {
+                            item {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.padding(vertical = 6.dp)
+                                )
+                            }
+                        }
+
+                        comments.loadState.append is LoadState.Error -> {
+                            item {
+                                ErrorListItem(
+                                    error = (comments.loadState.append as LoadState.Error).error.message,
+                                    onTryClicked = {
+                                        comments.retry()
+                                    }
+                                )
+                            }
+                        }
+
+                        comments.loadState.refresh is LoadState.Error -> {
+                            showSnackBar(
+                                scope = scope,
+                                snackbarHostState = scaffoldState.snackbarHostState,
+                                message = (comments.loadState.refresh as LoadState.Error).error.message
+                                    ?: context.resources.getString(R.string.some_error_happened),
+                                actionLabel = context.resources.getString(R.string.try_again),
+                                actionPerformed = { comments.refresh() },
+                                dismissed = {}
+                            )
+                        }
                     }
                 }
             }
         }
-    }
+    )
 }
 
 @Composable
@@ -236,7 +272,13 @@ fun UserItem(user: CachedUser) {
             modifier = Modifier
                 .size(45.dp)
                 .clip(CircleShape),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
+            placeholder = rememberAsyncImagePainter(
+                ContextCompat.getDrawable(
+                    LocalContext.current,
+                    R.drawable.user_image_placeholder
+                )
+            )
         )
         Column(
             modifier = Modifier

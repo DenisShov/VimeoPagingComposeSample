@@ -14,7 +14,6 @@ fun CachedComment.toComment() = Comment(
 )
 
 fun Comment.toCachedComment() = CachedComment(
-    id = null,
     uri = uri,
     text = text,
     created_on = createdOn,

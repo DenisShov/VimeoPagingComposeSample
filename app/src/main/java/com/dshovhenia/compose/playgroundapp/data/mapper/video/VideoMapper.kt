@@ -43,7 +43,6 @@ fun CachedVideo.toVideo(): Video {
 }
 
 fun Video.toCachedVideo() = CachedVideo(
-    id = null,
     uri = uri,
     name = name,
     description = description ?: "",

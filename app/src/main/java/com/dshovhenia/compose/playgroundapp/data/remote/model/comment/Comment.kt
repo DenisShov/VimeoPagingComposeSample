@@ -12,6 +12,6 @@ data class Comment(
     var text: String = "",
     @SerializedName("created_on")
     var createdOn: Date? = null,
-    var nextPage: String = "",
+    var nextPage: String? = null,
     var user: User? = null
 ) : Parcelable

@@ -45,7 +45,7 @@ sealed class Result<out SuccessType, out FailureType> {
     fun <R> newSuccess(b: R) = Success(b)
 
     companion object {
-        fun <T> success(from: T): Result<T, Errors> {
+        fun <T> success(from: T): Result<T, AppError> {
             return Success(from)
         }
 

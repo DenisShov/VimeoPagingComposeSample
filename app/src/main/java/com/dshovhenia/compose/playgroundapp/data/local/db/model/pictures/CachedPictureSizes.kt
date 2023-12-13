@@ -27,7 +27,7 @@ import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.CachedVide
 )
 class CachedPictureSizes(
     @PrimaryKey(autoGenerate = true)
-    var id: Long? = null,
+    var id: Long = 0,
     var videoId: Long? = null,
     var userId: Long? = null,
 

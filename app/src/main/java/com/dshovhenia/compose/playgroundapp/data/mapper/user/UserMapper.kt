@@ -30,7 +30,6 @@ fun CachedUser.toUser(): User {
 }
 
 fun User.toCachedUser() = CachedUser(
-    id = null,
     commentId = null,
     videoId = null,
     name = name,

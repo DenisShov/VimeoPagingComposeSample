@@ -7,7 +7,6 @@ import com.dshovhenia.compose.playgroundapp.data.remote.deserializer.VimeoMetada
 import com.dshovhenia.compose.playgroundapp.data.remote.model.user.UserMetadata
 import com.dshovhenia.compose.playgroundapp.data.remote.model.video.VideoMetadata
 import com.dshovhenia.compose.playgroundapp.data.remote.service.VimeoApiService
-import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -43,7 +42,6 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .addInterceptor(authenticationInterceptor)
-            .addNetworkInterceptor(StethoInterceptor())
             .authenticator(vimeoServiceAuthenticator).build()
     }
 

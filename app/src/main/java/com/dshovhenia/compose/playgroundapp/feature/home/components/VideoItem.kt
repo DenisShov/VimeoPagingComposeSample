@@ -58,6 +58,7 @@ fun VideoItem(video: CachedVideo, onVideoClick: (CachedVideo) -> Unit = {}) {
                     model = imageUrl,
                     contentDescription = stringResource(R.string.image_description_video_image),
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.popcorn),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp)

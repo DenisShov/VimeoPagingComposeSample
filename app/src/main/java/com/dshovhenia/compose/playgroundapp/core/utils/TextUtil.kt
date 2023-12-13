@@ -1,7 +1,5 @@
 package com.dshovhenia.compose.playgroundapp.core.utils
 
-import android.view.View
-import android.widget.TextView
 import java.util.Date
 import java.util.Locale
 
@@ -22,21 +20,10 @@ object TextUtil {
     fun formatSecondsToDuration(seconds: Int) =
         String.format(Locale.getDefault(), "%02d:%02d", seconds / SIXTY, seconds % SIXTY)
 
-    fun dateCreatedToTimePassed(dateCreated: Date) =
-        minutesToTimePassed(getDifferenceMinutes(dateCreated, Date()))
-
-    fun formatVideoAgeAndPlays(plays: Long?, dateCreated: Date?) =
-        if (plays != null && dateCreated != null) {
-            String.format(
-                Locale.getDefault(), "%s ⋅ %s",
-                formatIntMetric(plays, "play", "plays"),
-                dateCreatedToTimePassed(dateCreated)
-            )
-        } else if (plays == null && dateCreated != null) {
-            dateCreatedToTimePassed(dateCreated)
-        } else if (plays != null) {
-            formatIntMetric(plays, "play", "plays")
-        } else ""
+    fun dateCreatedToTimePassed(dateCreated: Date?) =
+        dateCreated?.let {
+            minutesToTimePassed(getDifferenceMinutes(it, Date()))
+        } ?: ""
 
     fun formatVideoCountAndFollowers(videos: Int, followers: Int) =
         String.format(
@@ -44,11 +31,6 @@ object TextUtil {
             formatIntMetric(videos.toLong(), "video", "videos"),
             formatIntMetric(followers.toLong(), "follower", "followers")
         )
-
-    fun hideOrDisplayTextViewIfNullString(textView: TextView, text: String?) {
-        textView.text = text
-        textView.visibility = if (text.isNullOrEmpty()) View.GONE else View.VISIBLE
-    }
 
     private fun minutesToTimePassed(minutes: Int) =
         if (minutes < SIXTY) {
