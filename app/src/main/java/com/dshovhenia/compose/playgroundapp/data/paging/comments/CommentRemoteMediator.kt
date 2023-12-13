@@ -82,7 +82,7 @@ class CommentRemoteMediator(
     }
 
     private fun addLinkToNextPage(collection: Collection<Comment>) = collection.data.map {
-        it.nextPage = collection.paging?.next ?: ""
+        it.nextPage = collection.paging?.next
         it
     }
 

@@ -20,6 +20,6 @@ abstract class PictureSizesDao {
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertPictureSizes(cachedPictureSizes: List<CachedPictureSizes?>)
+    abstract suspend fun insertPictureSizes(cachedPictureSizes: List<CachedPictureSizes>)
 
 }

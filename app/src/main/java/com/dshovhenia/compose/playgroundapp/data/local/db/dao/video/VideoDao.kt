@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.Flow
 @Suppress("UnnecessaryAbstractClass")
 abstract class VideoDao {
 
-  @Transaction
-  @Query("SELECT * FROM " + DbConstants.VIDEO_TABLE_NAME)
-  abstract fun getVideos(): PagingSource<Int, RelationsVideo>
+    @Transaction
+    @Query("SELECT * FROM " + DbConstants.VIDEO_TABLE_NAME)
+    abstract fun getVideos(): PagingSource<Int, RelationsVideo>
 
-  @Transaction
-  @Query("SELECT * FROM " + DbConstants.VIDEO_TABLE_NAME + " WHERE id = :videoId")
-  abstract fun getVideoById(videoId: Long): Flow<RelationsVideo>
+    @Transaction
+    @Query("SELECT * FROM " + DbConstants.VIDEO_TABLE_NAME + " WHERE id = :videoId")
+    abstract suspend fun getVideoById(videoId: Long): RelationsVideo
 
-  @Query("DELETE FROM " + DbConstants.VIDEO_TABLE_NAME)
-  abstract suspend fun clearVideos()
+    @Query("DELETE FROM " + DbConstants.VIDEO_TABLE_NAME)
+    abstract suspend fun clearVideos()
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  abstract suspend fun insertVideo(cachedVideo: CachedVideo): Long
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertVideo(cachedVideo: CachedVideo): Long
 
 }

@@ -10,7 +10,6 @@ fun CachedPictureSizes.toPictureSizes() = PictureSizes(
 )
 
 fun PictureSizes.toCachedPictureSizes() = CachedPictureSizes(
-    id = null,
     videoId = null,
     userId = null,
     width = width,

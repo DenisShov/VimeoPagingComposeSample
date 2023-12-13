@@ -12,13 +12,13 @@ import kotlin.collections.ArrayList
 @Entity(tableName = DbConstants.VIDEO_TABLE_NAME)
 data class CachedVideo(
     @PrimaryKey(autoGenerate = true)
-    var id: Long? = null,
+    var id: Long = 0,
     var uri: String = "",
     var name: String = "",
     var description: String = "",
     var duration: Int = 0,
     var createdTime: Date? = null,
-    var nextPage: String = "",
+    var nextPage: String? = null,
 
     var commentsUri: String = "",
     var commentsTotal: Int = 0,

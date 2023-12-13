@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +50,7 @@ fun CommentItem(comment: RelationsComment) {
             modifier = Modifier
                 .size(45.dp)
                 .clip(CircleShape),
+            placeholder = painterResource(id = R.drawable.default_profile),
             contentScale = ContentScale.Crop
         )
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -90,11 +92,10 @@ fun CommentItem(comment: RelationsComment) {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun CommentItemPreview() {
     ComposePlaygroundAppTheme {
         CommentItem(comment = getRelationsComment())
     }
 }
-

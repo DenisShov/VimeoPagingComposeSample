@@ -8,13 +8,17 @@ import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.RelationsV
 import com.dshovhenia.compose.playgroundapp.domain.usecase.GetVideosUseCase
 import com.dshovhenia.compose.playgroundapp.feature.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
+    private val dispatcher: CoroutineDispatcher,
     private val getVideosUseCase: GetVideosUseCase
 ) : BaseViewModel() {
 
@@ -35,20 +39,24 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun getRecentVideos() = viewModelScope.launch {
-        getVideosUseCase.launch(Constants.STAFF_PICKS_URI, null)
-            .cachedIn(viewModelScope)
-            .collect {
-                _videos.value = it
-            }
+    private fun getRecentVideos() = viewModelScope.launch(dispatcher) {
+        withContext(dispatcher) {
+            getVideosUseCase.launch(Constants.STAFF_PICKS_URI, null)
+                .cachedIn(viewModelScope)
+                .collect {
+                    _videos.value = it
+                }
+        }
     }
 
     private fun searchVideosByKeyword(keyword: String) = viewModelScope.launch {
-        getVideosUseCase.launch(Constants.COLLECTION_URI, keyword)
-            .cachedIn(viewModelScope)
-            .collect {
-                _videos.value = it
-            }
+        withContext(Dispatchers.IO) {
+            getVideosUseCase.launch(Constants.COLLECTION_URI, keyword)
+                .cachedIn(viewModelScope)
+                .collect {
+                    _videos.value = it
+                }
+        }
     }
 
     init {

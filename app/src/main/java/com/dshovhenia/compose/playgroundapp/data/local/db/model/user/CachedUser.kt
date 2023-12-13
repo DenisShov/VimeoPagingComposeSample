@@ -2,7 +2,7 @@ package com.dshovhenia.compose.playgroundapp.data.local.db.model.user
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.ForeignKey.CASCADE
+import androidx.room.ForeignKey.Companion.CASCADE
 import androidx.room.Ignore
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -30,7 +30,7 @@ import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.CachedVide
 )
 data class CachedUser(
     @PrimaryKey(autoGenerate = true)
-    var id: Long? = null,
+    var id: Long = 0,
     var commentId: Long? = null,
     var videoId: Long? = null,
 

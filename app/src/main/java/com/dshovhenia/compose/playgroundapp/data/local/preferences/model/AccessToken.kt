@@ -23,7 +23,7 @@ class AccessToken {
     var scope = ""
 
     private fun firstLetterToUpperCase(string: String) =
-        string[0].toString().toUpperCase(Locale.getDefault()) + string.substring(1)
+        string[0].toString().uppercase(Locale.getDefault()) + string.substring(1)
 
     val authorizationHeader: String
         get() = if (tokenType.isEmpty()) "" else "$tokenType $token"

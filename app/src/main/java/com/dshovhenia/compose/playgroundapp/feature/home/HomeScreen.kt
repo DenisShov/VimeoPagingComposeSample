@@ -1,5 +1,6 @@
 package com.dshovhenia.compose.playgroundapp.feature.home
 
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,11 +16,13 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberScaffoldState
@@ -32,15 +35,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.os.bundleOf
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.dshovhenia.compose.playgroundapp.R
+import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.RelationsVideo
 import com.dshovhenia.compose.playgroundapp.data.mapper.relationsMapper.toCachedVideo
 import com.dshovhenia.compose.playgroundapp.feature.base.HandleFailure
-import com.dshovhenia.compose.playgroundapp.feature.details.VideoFragment
 import com.dshovhenia.compose.playgroundapp.feature.home.components.SearchBar
 import com.dshovhenia.compose.playgroundapp.feature.home.components.VideoItem
 import kotlinx.coroutines.CoroutineScope
@@ -48,9 +51,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeScreen(
-    navController: NavController, viewModel: HomeViewModel
-) {
+fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
     HandleFailure(viewModel.failure)
 
     val context = LocalContext.current
@@ -62,11 +63,37 @@ fun HomeScreen(
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState()
 
+    HomeScreenView(
+        context,
+        navController,
+        videos,
+        scaffoldState,
+        pullRefreshState,
+        scope,
+        isRefreshing,
+        searchByKeyword = { keyword ->
+            viewModel.searchKeywordVideos(keyword)
+        }
+    )
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun HomeScreenView(
+    context: Context,
+    navController: NavController,
+    videos: LazyPagingItems<RelationsVideo>,
+    scaffoldState: ScaffoldState,
+    pullRefreshState: PullRefreshState,
+    scope: CoroutineScope,
+    isRefreshing: Boolean,
+    searchByKeyword: (String) -> Unit
+) {
     Scaffold(
         scaffoldState = scaffoldState,
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            SearchBar(viewModel)
+            SearchBar(searchByKeyword)
         },
         content = { padding ->
             Box(
@@ -93,14 +120,13 @@ fun HomeScreen(
                                 VideoItem(
                                     video = it.toCachedVideo(),
                                     onVideoClick = { clickedVideo ->
-                                        val bundle = bundleOf(
-                                            VideoFragment.ARG_VIDEO_ID to clickedVideo.id,
-                                            VideoFragment.ARG_COMMENTS_URL to clickedVideo.commentsUri
-                                        )
                                         navController.navigate(
-                                            R.id.action_homeFragment_to_videoFragment, bundle
+                                            Screen.VideoScreen.withArgs(
+                                                clickedVideo.id,
+                                                clickedVideo.commentsUri
+                                            )
                                         )
-                                    });
+                                    })
                             }
                         }
 
@@ -197,4 +223,3 @@ fun showSnackBar(
         }
     }
 }
-

@@ -1,7 +1,6 @@
 package com.dshovhenia.compose.playgroundapp.feature.details
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -11,35 +10,26 @@ import com.dshovhenia.compose.playgroundapp.data.mapper.relationsMapper.toCached
 import com.dshovhenia.compose.playgroundapp.domain.usecase.GetCommentsUseCase
 import com.dshovhenia.compose.playgroundapp.domain.usecase.GetVideoByIdUseCase
 import com.dshovhenia.compose.playgroundapp.feature.base.BaseViewModel
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.dshovhenia.compose.playgroundapp.feature.ARG_COMMENTS_URL
+import com.dshovhenia.compose.playgroundapp.feature.ARG_VIDEO_ID
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class VideoViewModel @AssistedInject constructor(
-    @Assisted private val videoId: Long,
-    @Assisted private val commentUrl: String,
+@HiltViewModel
+class VideoViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val dispatcher: CoroutineDispatcher,
     private val getVideoByIdUseCase: GetVideoByIdUseCase,
     private val getCommentsUseCase: GetCommentsUseCase,
 ) : BaseViewModel() {
 
-    @AssistedFactory
-    interface Factory {
-        fun create(videoId: Long, commentUrl: String): VideoViewModel
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    companion object {
-        fun provideFactory(
-            assistedFactory: Factory, videoId: Long, commentUrl: String
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return assistedFactory.create(videoId, commentUrl) as T
-            }
-        }
-    }
+    private val videoId: Long = checkNotNull(savedStateHandle[ARG_VIDEO_ID])
+    private val commentUrl: String = checkNotNull(savedStateHandle[ARG_COMMENTS_URL])
 
     private val _video = MutableStateFlow<CachedVideo?>(null)
     val video = _video.asStateFlow()
@@ -48,20 +38,27 @@ class VideoViewModel @AssistedInject constructor(
     val comments = _comments.asStateFlow()
 
     private fun getVideoByIdFlow(videoId: Long) {
-        viewModelScope.launch {
-            getVideoByIdUseCase.launch(videoId).collect {
-                _video.value = it.toCachedVideo()
-            }
+        viewModelScope.launch(dispatcher) {
+            withContext(dispatcher) {
+                getVideoByIdUseCase.launch(videoId)
+            }.fold(
+                onSuccess = {
+                    _video.value = it.toCachedVideo()
+                },
+                onFailure = ::handleFailure
+            )
         }
     }
 
     private fun getComments(commentUrl: String) {
         viewModelScope.launch {
-            getCommentsUseCase.launch(commentUrl)
-                .cachedIn(viewModelScope)
-                .collect {
-                    _comments.value = it
-                }
+            withContext(dispatcher) {
+                getCommentsUseCase.launch(commentUrl)
+                    .cachedIn(viewModelScope)
+                    .collect {
+                        _comments.value = it
+                    }
+            }
         }
     }
 

@@ -31,12 +31,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dshovhenia.compose.playgroundapp.R
-import com.dshovhenia.compose.playgroundapp.feature.home.HomeViewModel
 
 @Composable
-fun SearchBar(viewModel: HomeViewModel) {
+fun SearchBar(searchByKeyword: (String) -> Unit) {
     val localFocusManager = LocalFocusManager.current
     var searchBarText by rememberSaveable { mutableStateOf("") }
 
@@ -68,7 +66,7 @@ fun SearchBar(viewModel: HomeViewModel) {
                 if (searchBarText != "") {
                     IconButton(onClick = {
                         searchBarText = ""
-                        viewModel.searchKeywordVideos("")
+                        searchByKeyword("")
                     }) {
                         Icon(
                             Icons.Default.Close,
@@ -81,7 +79,7 @@ fun SearchBar(viewModel: HomeViewModel) {
             textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
             keyboardActions = KeyboardActions(onSearch = {
                 if (searchBarText != "") {
-                    viewModel.searchKeywordVideos(searchBarText)
+                    searchByKeyword(searchBarText)
                 }
                 localFocusManager.clearFocus()
             }),
@@ -92,8 +90,8 @@ fun SearchBar(viewModel: HomeViewModel) {
 }
 
 @SuppressLint("UnrememberedMutableState")
-@Preview(showBackground = true)
+@Preview(showSystemUi = true)
 @Composable
 fun SearchBarPreview() {
-    SearchBar(viewModel = viewModel())
+    SearchBar(searchByKeyword = {})
 }
