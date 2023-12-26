@@ -6,11 +6,11 @@ import com.dshovhenia.compose.playgroundapp.data.local.db.model.pictures.CachedP
 
 data class RelationsUser(
     @Embedded
-  val user: CachedUser,
+    val user: CachedUser,
     @Relation(
-    parentColumn = "id",
-    entityColumn = "userId",
-    entity = CachedPictureSizes::class
-  )
-  val pictureSizes: List<CachedPictureSizes>
+        parentColumn = "id",
+        entityColumn = "userId",
+        entity = CachedPictureSizes::class
+    )
+    val pictureSizes: List<CachedPictureSizes>
 )

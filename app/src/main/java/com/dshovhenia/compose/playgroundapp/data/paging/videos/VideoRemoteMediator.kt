@@ -32,30 +32,23 @@ class VideoRemoteMediator(
                 LoadType.REFRESH -> null
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    val remoteKey =
-                        state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.video?.nextPage
-
-                    // You must explicitly check if the page key is null when
-                    // appending, since null is only valid for initial load.
-                    // If you receive null for APPEND, that means you have
-                    // reached the end of pagination and there are no more
-                    // items to load.
-                    if (remoteKey == null) {
-                        return MediatorResult.Success(endOfPaginationReached = true)
-                    }
-
-                    remoteKey
+                    val video = state.lastItemOrNull()?.video
+                    val nextPage = video?.nextPage
+                        ?: return MediatorResult.Success(
+                            endOfPaginationReached = video != null
+                        )
+                    nextPage
                 }
+            }
+
+            if (loadType == LoadType.REFRESH) {
+                videoDbHelper.clear()
             }
 
             val response = if (loadKey == null) {
                 service.getVideos(initialUri, keyword, INITIAL_PAGE_NUMBER, perPageCount)
             } else {
                 service.getVideos(loadKey, null, null, null)
-            }
-
-            if (loadType == LoadType.REFRESH) {
-                videoDbHelper.clear()
             }
 
             if (response.isSuccessful) {

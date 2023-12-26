@@ -4,8 +4,8 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import com.dshovhenia.compose.playgroundapp.data.local.db.helper.CommentDbHelper
-import com.dshovhenia.compose.playgroundapp.data.mapper.comment.toCachedComment
 import com.dshovhenia.compose.playgroundapp.data.local.db.model.comment.RelationsComment
+import com.dshovhenia.compose.playgroundapp.data.mapper.comment.toCachedComment
 import com.dshovhenia.compose.playgroundapp.data.remote.model.Collection
 import com.dshovhenia.compose.playgroundapp.data.remote.model.comment.Comment
 import com.dshovhenia.compose.playgroundapp.data.remote.service.VimeoApiService
@@ -29,48 +29,40 @@ class CommentRemoteMediator(
                 LoadType.REFRESH -> null
                 LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
                 LoadType.APPEND -> {
-                    val remoteKey = state.pages.lastOrNull { it.data.isNotEmpty() }?.data?.lastOrNull()?.comment?.nextPage
-
-                    // Explicitly check if the page key is null when
-                    // appending, since null is only valid for initial load.
-                    // If you receive null for APPEND, that means you have
-                    // reached the end of pagination and there are no more
-                    // items to load.
-                    if (remoteKey == null) {
-                        return MediatorResult.Success(endOfPaginationReached = true)
-                    }
-
-                    remoteKey
+                    val comment = state.lastItemOrNull()?.comment
+                    val nextPage = comment?.nextPage
+                        ?: return MediatorResult.Success(
+                            endOfPaginationReached = comment != null
+                        )
+                    nextPage
                 }
             }
 
-            val response = if (loadKey == null) {
-                Timber.i("getComments. initialUri: %s", initialUri)
-                service.getComments(initialUri, null, INITIAL_PAGE_NUMBER, perPageCount)
-            } else {
-                Timber.i("getComments. loadKey: %s", loadKey)
-                service.getComments(loadKey, null, null, null)
-            }
-
             if (loadType == LoadType.REFRESH) {
-                Timber.i("clear comments. loadType: %s", loadType)
                 commentDbHelper.clear()
             }
 
+            val response = if (loadKey == null) {
+                service.getComments(initialUri, INITIAL_PAGE_NUMBER, perPageCount)
+            } else {
+                service.getComments(loadKey, null, null)
+            }
+
+            val collection = response.body()
+
             if (response.isSuccessful) {
-                val collection = response.body()
                 if (collection != null && collection.data.isNotEmpty()) {
                     // Store the loaded data and the next key in transaction, so that
                     // they're always consistent.
-                    val videos = addLinkToNextPage(collection)
-                    commentDbHelper.insertComments(videos.map { it.toCachedComment() })
+                    val comments = addLinkToNextPage(collection)
+                    val commentsToSave = comments.map { it.toCachedComment() }
+                    commentDbHelper.insertComments(commentsToSave)
                 } else {
                     Timber.i("No data. Response: %s", response)
                 }
             }
 
-            val endOfPaginationReached = response.body()?.data.isNullOrEmpty()
-            Timber.i("End of pagination reached = %s", endOfPaginationReached)
+            val endOfPaginationReached = collection?.data.isNullOrEmpty()
             MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
         } catch (e: IOException) {
             e.printStackTrace()
@@ -81,10 +73,11 @@ class CommentRemoteMediator(
         }
     }
 
-    private fun addLinkToNextPage(collection: Collection<Comment>) = collection.data.map {
-        it.nextPage = collection.paging?.next
-        it
-    }
+    private fun addLinkToNextPage(collection: Collection<Comment>) =
+        collection.data.map {
+            it.nextPage = collection.paging?.next
+            it
+        }
 
     companion object {
         private const val INITIAL_PAGE_NUMBER = 1

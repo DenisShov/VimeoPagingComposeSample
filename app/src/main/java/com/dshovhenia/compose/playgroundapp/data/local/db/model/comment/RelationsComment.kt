@@ -7,11 +7,11 @@ import com.dshovhenia.compose.playgroundapp.data.local.db.model.user.RelationsUs
 
 data class RelationsComment(
     @Embedded
-  val comment: CachedComment,
+    val comment: CachedComment,
     @Relation(
-    parentColumn = "id",
-    entityColumn = "commentId",
-    entity = CachedUser::class
-  )
-  val relationsUser: RelationsUser
+        parentColumn = "id",
+        entityColumn = "commentId",
+        entity = CachedUser::class
+    )
+    val relationsUser: RelationsUser
 )
