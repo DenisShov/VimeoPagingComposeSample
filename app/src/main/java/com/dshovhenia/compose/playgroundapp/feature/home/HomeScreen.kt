@@ -43,7 +43,6 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.dshovhenia.compose.playgroundapp.R
 import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.RelationsVideo
 import com.dshovhenia.compose.playgroundapp.data.mapper.relationsMapper.toCachedVideo
-import com.dshovhenia.compose.playgroundapp.feature.base.HandleFailure
 import com.dshovhenia.compose.playgroundapp.feature.home.components.SearchBar
 import com.dshovhenia.compose.playgroundapp.feature.home.components.VideoItem
 import kotlinx.coroutines.CoroutineScope
@@ -52,8 +51,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(navController: NavController, viewModel: HomeViewModel) {
-    HandleFailure(viewModel.failure)
-
     val context = LocalContext.current
     val videos = viewModel.videos.collectAsLazyPagingItems()
 

@@ -64,7 +64,6 @@ import com.dshovhenia.compose.playgroundapp.core.utils.TextUtil
 import com.dshovhenia.compose.playgroundapp.data.local.db.model.comment.RelationsComment
 import com.dshovhenia.compose.playgroundapp.data.local.db.model.user.CachedUser
 import com.dshovhenia.compose.playgroundapp.data.local.db.model.video.CachedVideo
-import com.dshovhenia.compose.playgroundapp.feature.base.HandleFailure
 import com.dshovhenia.compose.playgroundapp.feature.details.components.CommentItem
 import com.dshovhenia.compose.playgroundapp.feature.details.components.ExpandableText
 import com.dshovhenia.compose.playgroundapp.feature.home.ErrorListItem
@@ -76,8 +75,6 @@ import kotlinx.coroutines.CoroutineScope
 
 @Composable
 fun VideoScreen(viewModel: VideoViewModel = hiltViewModel()) {
-    HandleFailure(viewModel.failure)
-
     val video by viewModel.video.collectAsState()
     val comments = viewModel.comments.collectAsLazyPagingItems()
 
