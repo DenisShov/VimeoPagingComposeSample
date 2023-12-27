@@ -67,7 +67,7 @@ fun VideoItem(video: CachedVideo, onVideoClick: (CachedVideo) -> Unit = {}) {
                     text = TextUtil.formatSecondsToDuration(video.duration),
                     modifier = Modifier
                         .wrapContentWidth()
-                        .background(colorResource(R.color.dimFilter), RectangleShape)
+                        .background(colorResource(R.color.white), RectangleShape)
                         .align(Alignment.BottomEnd),
                     fontSize = 12.sp,
                 )
