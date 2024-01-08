@@ -13,6 +13,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ComposePlaygroundApp"
+rootProject.name = "VimeoPagingComposeSample"
 include(":app")
  

@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.dshovhenia.compose.playgroundapp"
+    namespace = "com.dshovhenia.vimeo.paging.compose.sample"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.dshovhenia.compose.playgroundapp"
+        applicationId = "com.dshovhenia.vimeo.paging.compose.sample"
         minSdk = 24
         targetSdk = 34
 
