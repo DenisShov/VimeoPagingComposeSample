@@ -1,8 +1,11 @@
 <resources>
-    <string name="app_name">Vimeo</string>
+    <string name="app_name">VimeoPagingComposeSample</string>
 
     <string name="search">Search</string>
     <string name="comments">Comments</string>
+    <string name="user_name_placeholder">No name</string>
+    <string name="show_more">…  Show More</string>
+    <string name="show_less">Show Less</string>
 
     <!-- HomeFragment -->
     <plurals name="video_feed_likes_plural">
@@ -19,5 +22,12 @@
     <string name="image_description_video_image">Video image</string>
     <string name="image_description_expand">Expand</string>
     <string name="image_description_attention">Attention</string>
+    <string name="image_description_likes">Likes</string>
 
+    <!-- Error strings -->
+    <string name="no_network">No network</string>
+    <string name="some_api_error">Some API error</string>
+    <string name="faced_an_error">Faced an error: </string>
+    <string name="some_error_happened">Some error happened</string>
+    <string name="try_again">Try again</string>
 </resources>
