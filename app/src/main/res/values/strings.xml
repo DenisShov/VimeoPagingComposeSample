@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Vimeo</string>
+    <string name="app_name">VimeoPagingComposeSample</string>
 
     <string name="search">Search</string>
     <string name="comments">Comments</string>
