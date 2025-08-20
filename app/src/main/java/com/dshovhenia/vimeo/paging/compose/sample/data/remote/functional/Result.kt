@@ -5,9 +5,8 @@ import com.dshovhenia.vimeo.paging.compose.sample.data.remote.functional.Result.
 
 /**
  * Represents a value of one of two possible types
- * Instances of [Result] are result an instance of [Failure] or [Success].
- * FP Convention dictates that [Failure] is used for
- * and [Success] is used for "success".
+ * Instances of [Result] are either an instance of [Failure] or [Success].
+ * FP convention dictates that [Failure] represents failure and [Success] represents success.
  *
  * @see Failure
  * @see Success
